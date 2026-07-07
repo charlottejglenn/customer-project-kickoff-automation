@@ -1,0 +1,410 @@
+{
+  "name": "Customer Project Kickoff Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3a60052e-98bd-473b-aace-f864615167cf",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Kickoff Ready",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "8d05052d-4ceb-492c-a477-90859d2f4a16",
+              "leftValue": "={{ $json['Kickoff Email Sent'] }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "name": "Filter Eligible Projects"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_GOOGLE_SHEET_URL",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Projects",
+          "mode": "name",
+          "cachedResultName": "Projects"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "name": "Load Project Tracker"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Daily Project Check"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_GOOGLE_SHEET_URL",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Projects",
+          "mode": "name",
+          "cachedResultName": "Projects"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Project ID": "={{ $('Load Project Tracker').item.json['Project ID'] }}",
+            "Kickoff Email Sent": "TRUE",
+            "Kickoff Email Sent At": "={{ $now }}",
+            "Last Automation Run": "={{ $now }}",
+            "Automation Status": "Success"
+          },
+          "matchingColumns": [
+            "Project ID"
+          ],
+          "schema": [
+            {
+              "id": "Project ID",
+              "displayName": "Project ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Project Name",
+              "displayName": "Project Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Customer Contact Name",
+              "displayName": "Customer Contact Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Customer Email",
+              "displayName": "Customer Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Start Date",
+              "displayName": "Start Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Project Owner",
+              "displayName": "Project Owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Owner Email",
+              "displayName": "Owner Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Required Kickoff Preparation",
+              "displayName": "Required Kickoff Preparation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Kickoff Email Sent",
+              "displayName": "Kickoff Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Kickoff Email Sent At",
+              "displayName": "Kickoff Email Sent At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Automation Run",
+              "displayName": "Last Automation Run",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Automation Status",
+              "displayName": "Automation Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Message",
+              "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        0
+      ],
+      "name": "Mark Project as Processed"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Filter Eligible Projects').item.json['Customer Email'] }}",
+        "subject": "={{ $json.emailSubject }}",
+        "emailType": "text",
+        "message": "={{ $json.emailBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        0
+      ],
+      "name": "Send Kickoff Email"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "84eb221d-5084-499d-8ce7-6abebf56058d",
+              "name": "emailSubject",
+              "value": "=Kickoff: {{ $json[\"Project Name\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "1c6af020-73d5-473a-9e7b-6733e2edcf3c",
+              "name": "emailGreetingName",
+              "value": "={{$json[\"Customer Contact Name\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "5d872198-02ce-4b28-89c3-b04cacc8ace9",
+              "name": "emailBody",
+              "value": "=Hallo {{ $json[\"Customer Contact Name\"] }},\n\nich freue mich auf den gemeinsamen Start von \"{{ $json[\"Project Name\"] }}\" am {{ $json[\"Start Date\"] }}.\n\nWir haben den Projektplan im Projektmanagement-Tool für euch bereitgestellt. Bitte meldet euch vor dem Start einmal dort an und schaut euch den Plan kurz an.\n\nIm Projektplan findet ihr die nächsten Schritte, erste To-dos und wichtige Infos zum Ablauf. Fragen oder Ergänzungen könnt ihr gerne direkt im Tool hinterlassen, damit wir sie vor dem Kickoff berücksichtigen können.\n\nBitte erledigt vor dem Start außerdem diese Schritte:\n\n{{ $json[\"Required Kickoff Preparation\"].split(\",\").map(item => \"- \" + item.trim()).join(\"\\n\") }}\n\nVielen Dank und viele Grüße\n{{ $json[\"Project Owner\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        0
+      ],
+      "name": "Prepare Kickoff Email"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Filter Eligible Projects": {
+      "main": [
+        [
+          {
+            "node": "Prepare Kickoff Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Project Tracker": {
+      "main": [
+        [
+          {
+            "node": "Filter Eligible Projects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Project Check": {
+      "main": [
+        [
+          {
+            "node": "Load Project Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Kickoff Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Project as Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Kickoff Email": {
+      "main": [
+        [
+          {
+            "node": "Send Kickoff Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [],
+  "_github_note": "Sanitized workflow export. Configure your own Google Sheets and Gmail credentials in n8n before running. Replace REPLACE_WITH_GOOGLE_SHEET_URL with your own project tracker URL."
+}
